@@ -187,8 +187,9 @@
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users = {
-      "sande" = import ./home.nix;
+      sande = import ./home.nix;
     };
+    backupFileExtension = "backup";
   };
 
   # This value determines the NixOS release from which the default

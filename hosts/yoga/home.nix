@@ -1,19 +1,9 @@
 { inputs, config, pkgs, ... }:
 
-  let
-    startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
-      ${pkgs.waybar}/bin/waybar &
-      ${pkgs.swww}/bin/swww init &
-  
-      sleep 1
-  
-      ${pkgs.swww}/bin/swww img ${./wallpaper.png} &
-    '';
-in
 {
   imports = [
     #nix-index-database.hmModules.nix-index
-    #../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/hyprland.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zsh.nix
     ../../modules/home-manager/direnv.nix
@@ -30,13 +20,6 @@ in
     sessionVariables.SHELL = "/etc/profiles/per-user/sande/bin/zsh";
   };
 
-  wayland.windowManager.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    settings = {
-      exec-once = ''${startupScript}/bin/start'';
-    };
-  };
   #wayland.windowManager.hyprland = {
   # enable = true;
   # package = pkgs.hyprland;

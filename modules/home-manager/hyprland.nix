@@ -1,56 +1,62 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }: 
 
-  home.packages = [pkgs.hyprland];
+let
+  startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
+    ${pkgs.waybar}/bin/waybar &
+    ${pkgs.swww}/bin/swww init &
 
-  programs.hyprland = {
+    sleep 1
+
+    ${pkgs.swww}/bin/swww img ${./wallpaper.png} &
+  '';
+in
+{
+
+   wayland.windowManager.hyprland = {
     enable = true;
-    nvidiaPatches = true;
-    xwayland.enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    settings = {
+
+      monitor = ",preferred,auto,auto";
+
+      "$mainMod" = "SUPER";
+      "$terminal" = "kitty";
+      "$fileManager" = "dolphin";
+      "$menu" = "wofi --show drun";
+
+      input = {
+        "kb_layout" = "fi";
+
+        "follow_mouse" = 1;
+
+        touchpad = {
+            natural_scroll = "yes";
+            clickfinger_behavior = "yes";
+            drag_lock = "yes";
+            tap-and-drag = "yes";
+        };
+
+        sensitivity = 0; # -1.0 to 1.0, 0 means no modification.
+      };
+
+      bind = [
+        "$mainMod, Q, exec, $terminal"
+
+        "$mainMod, 1, workspace, 1"
+        "$mainMod, 2, workspace, 2"
+        "$mainMod, 3, workspace, 3"
+
+        "$mainMod SHIFT, 1, movetoworkspace, 1"
+        "$mainMod SHIFT, 2, movetoworkspace, 2"
+        "$mainMod SHIFT, 3, movetoworkspace, 3"
+
+        "$mainMod, S, exec, rofi -show drun -show-icons"
+      ];
+
+
+      exec-once = ''${startupScript}/bin/start'';
+    };
   };
-
-  environment.systemPackages = [
-    pkgs.waybar
-    pkgs.dunst
-    pkgs.libnotify
-
-    pkgs.swww
-    pkgs.kitty
-    pkgs.rofi-wayland
-  ];
-
-  environment.sessionVariables = {
-    # WLR_NO_HARDWARE_CUROSRS = "1";
-    NIXOS_OZONE_WL = "1";
-  };
-
-  hardware = {
-    opengl.enable = true;
-    nvidia.modesettings.enable = true;
-  };
-
-  #(pkgs.waybar.overrideAttrs (oldAttrs: {
-  #    mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
-  #  })
-  #)
-
-  # XDG portal
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [   
-    pkgs.xdg-desktop-portal-hyprland
-    pkgs.xdg-desktop-portal-gtk
-  ];
-
-  # Enable sound with pipewire.
-  sound.enable = true;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-
 
 
 
