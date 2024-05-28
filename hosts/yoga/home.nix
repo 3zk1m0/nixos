@@ -2,13 +2,17 @@
 
 {
   imports = [
+    inputs.nix-colors.homeManagerModules.default
     #nix-index-database.hmModules.nix-index
     ../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/hyprlock.nix
+    ../../modules/home-manager/hypridle.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zsh.nix
     ../../modules/home-manager/direnv.nix
   ];
   
+  #colorSchema = inputs.nix-colors.colorSchema.gruvbox-dark-medium;
   
   # Home Manager needs a bit of information about you and the paths it should
   # manage.

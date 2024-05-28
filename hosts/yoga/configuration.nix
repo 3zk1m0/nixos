@@ -7,11 +7,15 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+      ./hardware-configuration.nixjklö kjjjk jjjjjjjklölllöll löjjkjjjjkl lö öl l lööööööööööööööööööööjklö  ll lkkjjjk ll kjk kjj lkj  j jkjkjjk jk jk 
       inputs.home-manager.nixosModules.default
     ];
 
-  # Bootloader.
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/ayu-dark.yaml";
+
+  stylix.image = "${./wallpaper.png}";
+
+  # Bootloader  
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -121,6 +125,8 @@
     hyprlock
     hypridle
     brightnessctl
+    nh
+    home-manager
   ];
 
   fonts.packages = with pkgs; [
