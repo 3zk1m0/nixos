@@ -5,7 +5,8 @@ let
     ${pkgs.waybar}/bin/waybar &
     ${pkgs.swww}/bin/swww init &
     ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
-1
+    blueman-applet &
+
     sleep 1
 
     ${pkgs.swww}/bin/swww img ${./wallpaper.png} &
@@ -18,7 +19,19 @@ in
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     settings = {
 
-      monitor = ",preferred,auto,auto";
+      monitor = [
+        "eDP-1,preferred,auto-right,2"
+        "DP-1,3840x2160@60,auto-left,1.5,transform,1"
+        "DP-2,3840x2160@60,0x0,1.5"
+        ",preferred,auto,auto"
+      ];
+
+      workspace = [
+        #"monitor:eDP-1, default:true, persistent:true"
+        #"monitor:DP-1, default:true, persistent:true"
+        "monitor:DP-2 r[1,10]"
+      ];
+
 
       "$mainMod" = "SUPER";
       "$terminal" = "kitty";
@@ -31,10 +44,11 @@ in
         "follow_mouse" = 1;
 
         touchpad = {
-            natural_scroll = "yes";
-            clickfinger_behavior = "yes";
-            drag_lock = "yes";
-            tap-and-drag = "yes";
+          natural_scroll = "yes";
+          clickfinger_behavior = "yes";
+          drag_lock = "yes";
+          tap-and-drag = "yes";
+          scroll_factor = 0.5;
         };
 
         sensitivity = 0; # -1.0 to 1.0, 0 means no modification.
@@ -46,8 +60,8 @@ in
         gaps_in = 2;
         gaps_out = 10;
         border_size = 2;
-        #"col.active_border" =" rgba(33ccffee) rgba(00ff99ee) 45deg";
-        #"col.inactive_border" = "rgba(595959aa)";
+        "col.active_border" =" rgba(33ccffee) rgba(00ff99ee) 45deg";
+        "col.inactive_border" = "rgba(595959aa)";
 
         layout = "dwindle";
 
@@ -69,7 +83,7 @@ in
         drop_shadow = "yes";
         shadow_range = 4;
         shadow_render_power = 3;
-        #"col.shadow" = "rgba(1a1a1aee)";
+        "col.shadow" = "rgba(1a1a1aee)";
       };
 
       animations = {
@@ -93,6 +107,9 @@ in
 
 
       bind = [
+
+        ", Print, exec, grim -g \"$(slurp -d)\" - | wl-copy"
+
         "$mainMod, Q, exec, $terminal"
         "$mainMod, C, killactive,"
         "$mainMod, M, exit, "

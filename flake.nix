@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-colors.url = "github:misterio77/nix-colors";
-    stylix.url = "github:danth/stylix";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
@@ -26,7 +26,14 @@
         modules = [
           ./hosts/yoga/configuration.nix
           inputs.home-manager.nixosModules.default
-          inputs.stylix.nixosModules.stylix
+        ];
+      };
+      xps = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/xps/configuration.nix
+          inputs.home-manager.nixosModules.default
+          inputs.nixos-hardware.nixosModules.dell-xps-15-9510-nvidia
         ];
       };
     };

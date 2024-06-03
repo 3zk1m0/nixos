@@ -39,6 +39,11 @@
       reload-nix = "sudo nixos-rebuild switch --flake ~/configuration";
     };
 
+    initExtra = ''
+      . "${pkgs.asdf-vm}/share/asdf-vm/asdf.sh"
+      . "${pkgs.asdf-vm}/share/asdf-vm/completions/asdf.bash"
+    '';
+
     envExtra = ''
       export PATH=$PATH:$HOME/.local/bin
     '';
