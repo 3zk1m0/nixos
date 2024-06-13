@@ -10,6 +10,7 @@
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zsh.nix
     ../../modules/home-manager/direnv.nix
+    ../../modules/home-manager/wlogout.nix
   ];
   
   #colorSchema = inputs.nix-colors.colorSchema.gruvbox-dark-medium;
@@ -60,7 +61,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-
+    github-desktop
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

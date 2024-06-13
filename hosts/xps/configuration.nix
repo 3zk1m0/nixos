@@ -2,12 +2,20 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
-
-{
+{ config, pkgs, inputs, ... }: let
+  zed-fhs = pkgs.buildFHSUserEnv {
+    name = "zed";
+    targetPkgs = pkgs:
+      with pkgs; [
+        zed-editor
+      ];
+    runScript = "zed";
+  };
+in {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      # <home-manager/nixos>
       inputs.home-manager.nixosModules.default
     ];
 
@@ -73,6 +81,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
 
@@ -93,6 +102,9 @@
     packages = with pkgs; [
       firefox
       vscode
+      zsh
+      ungoogled-chromium
+      zed-fhs
     #  thunderbird
     ];
   };
@@ -112,21 +124,30 @@
         mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
       })
     )
+    pulseaudio
+    pavucontrol
     dunst
     libnotify
     swww
     kitty
     rofi-wayland
     networkmanagerapplet
-    wlogout
     hyprlock
     hypridle
+    hyprcursor
+    hyprpaper
     brightnessctl
     nh
     home-manager
     slack
-    devenv
-    asdf-vm
+    devbox
+    grim
+    slurp
+    wl-clipboard
+    wlogout
+    discord
+    xwaylandvideobridge
+    nwg-displays
   ];
 
   fonts.packages = with pkgs; [
@@ -166,6 +187,7 @@
   };
 
   xdg.portal.enable = true;
+  xdg.portal.wlr.enable = true;
   xdg.portal.extraPortals = [
     pkgs.xdg-desktop-portal-gtk
   ];

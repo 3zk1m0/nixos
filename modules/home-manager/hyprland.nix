@@ -2,33 +2,36 @@
 
 let
   startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
-    ${pkgs.waybar}/bin/waybar &
+    pidof ${pkgs.waybar}/bin/waybar || ${pkgs.waybar}/bin/waybar &
+    pidof ${pkgs.hypridle}/bin/hypridle || ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww init &
     ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
     blueman-applet &
+  ''; 
 
-    sleep 1
+    #sleep 1
 
-    ${pkgs.swww}/bin/swww img ${./wallpaper.png} &
-  '';
+    # ${pkgs.swww}/bin/swww img ${./wallpaper.png} &
 in
 {
 
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    systemd.variables = ["--all"];
     settings = {
 
+      source = "~/.config/hypr/monitors.conf";
+
       monitor = [
-        "eDP-1,preferred,auto-right,2"
-        "DP-1,3840x2160@60,auto-left,1.5,transform,1"
-        "DP-2,3840x2160@60,0x0,1.5"
-        ",preferred,auto,auto"
+        ",preferred,auto,auto,bitdepth,10"
+      ];
+
+      env = [
+        "HYPRCURSOR_SIZE,24"
       ];
 
       workspace = [
-        #"monitor:eDP-1, default:true, persistent:true"
-        #"monitor:DP-1, default:true, persistent:true"
         "monitor:DP-2 r[1,10]"
       ];
 
@@ -151,6 +154,7 @@ in
 
       exec-once = [
         ''${startupScript}/bin/start''
+        "${pkgs.hyprpaper}/bin/hyprpaper"
         ];
     };
   };

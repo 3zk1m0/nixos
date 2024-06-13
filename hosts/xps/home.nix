@@ -2,21 +2,20 @@
 
 {
   imports = [
-    inputs.nix-colors.homeManagerModules.default
-    #nix-index-database.hmModules.nix-index
+    inputs.ags.homeManagerModules.default
     ../../modules/home-manager/hyprland.nix
     ../../modules/home-manager/hyprlock.nix
     ../../modules/home-manager/hypridle.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zsh.nix
     ../../modules/home-manager/direnv.nix
-    ../../modules/home-manager/waybar.nix
+    ../../modules/home-manager/waybar
+    ../../modules/home-manager/wlogout
+    ../../modules/home-manager/dunst
+    ../../modules/home-manager/ags
   ];
   
   programs.kitty.enable = true;
-
-
-  #colorSchema = inputs.nix-colors.colorSchema.gruvbox-dark-medium;
   
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -26,6 +25,8 @@
     sessionVariables.EDITOR = "nano";
     sessionVariables.SHELL = "/etc/profiles/per-user/sande/bin/zsh";
   };
+
+
 
   #wayland.windowManager.hyprland = {
   # enable = true;

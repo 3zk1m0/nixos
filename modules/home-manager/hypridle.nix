@@ -4,7 +4,7 @@
     ".config/hypr/hypridle.conf".text = ''
 general {
     lock_cmd = pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances.
-    before_sleep_cmd = hyprlock    # lock before suspend.
+    before_sleep_cmd = loginctl lock-session    # lock before suspend.
     after_sleep_cmd = hyprctl dispatch dpms on  # to avoid having to press a key twice to turn on the display.
 }
 
@@ -23,7 +23,7 @@ listener {
 
 listener {
     timeout = 300                             # 5min
-    on-timeout = hyprlock          # lock screen when timeout has passed
+    on-timeout = loginctl lock-session          # lock screen when timeout has passed
 }
 
 listener {
@@ -32,10 +32,10 @@ listener {
     on-resume = hyprctl dispatch dpms on          # screen on when activity is detected after timeout has fired.
 }
 
-listener {
-    timeout = 1800                                # 30min
-    on-timeout = systemctl suspend                # suspend pc
-}
+#listener {
+#    timeout = 1800                                # 30min
+#    on-timeout = systemctl suspend                # suspend pc
+#}
     '';
   };
 

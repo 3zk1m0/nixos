@@ -10,6 +10,7 @@
     };
     nix-colors.url = "github:misterio77/nix-colors";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    ags.url = "github:Aylur/ags";
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {

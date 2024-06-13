@@ -12,7 +12,7 @@
         side-by-side = true;
         navigate = true;
       };
-      userEmail = "sander.kallio@gmail.com";
+      userEmail = "sander.kallio@monad.fi";
       userName = "3zk1m0";
       extraConfig = {
         # FIXME: uncomment the next lines if you want to be able to clone private https repos
@@ -35,6 +35,10 @@
           colorMoved = "default";
         };
       };
+      ignores = [
+        "devbox.json"
+        "devbox.lock"
+      ];
     };
 
 }
