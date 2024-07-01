@@ -2,22 +2,22 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }: let
-  zed-fhs = pkgs.buildFHSUserEnv {
-    name = "zed";
-    targetPkgs = pkgs:
-      with pkgs; [
-        zed-editor
-      ];
-    runScript = "zed";
-  };
-in {
+{ config, pkgs, pkgs-unstable, nixpkgs-unstable, inputs, ... }:
+
+{
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       # <home-manager/nixos>
       inputs.home-manager.nixosModules.default
     ];
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    packageOverrides = pkgs: with pkgs; {
+      intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
+    };
+  };
 
   # Bootloader  
   boot.loader.systemd-boot.enable = true;
@@ -31,7 +31,14 @@ in {
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+    dns = "none";
+    wifi = {
+      powersave = false;
+      backend = "iwd";
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Helsinki";
@@ -104,15 +111,17 @@ in {
       vscode
       zsh
       ungoogled-chromium
-      zed-fhs
+      pkgs-unstable.ideamaker
     #  thunderbird
     ];
   };
 
   programs.zsh.enable = true;
+  programs.thunar.enable = true;
+  services.gvfs.enable = true; # Mount, trash, and other functionalities
+  services.tumbler.enable = true; # Thumbnail support for images
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -148,6 +157,9 @@ in {
     discord
     xwaylandvideobridge
     nwg-displays
+    xdg-utils
+    copyq
+    udiskie
   ];
 
   fonts.packages = with pkgs; [
@@ -179,23 +191,22 @@ in {
   programs.hyprland.enable = true;
   programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
 
+  programs.xwayland.enable = true;
 
   environment.sessionVariables = {
     WLR_NO_HARDWARE_CURSORS = "1";
     NIXOS_OZONE_WL = "1";
-    LIBVA_DRIVER_NAME = "iHD";
+    #LIBVA_DRIVER_NAME = "iHD";
   };
 
   xdg.portal.enable = true;
   xdg.portal.wlr.enable = true;
-  xdg.portal.extraPortals = [
-    pkgs.xdg-desktop-portal-gtk
+  xdg.portal.extraPortals = with pkgs; [
+    xdg-desktop-portal-gtk
   ];
 
 
-  nixpkgs.config.packageOverrides = pkgs: {
-    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
-  };
+
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [

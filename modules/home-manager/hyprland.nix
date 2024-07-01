@@ -42,9 +42,9 @@ in
       "$menu" = "wofi --show drun";
 
       input = {
-        "kb_layout" = "fi";
-
-        "follow_mouse" = 1;
+        kb_layout = "fi";
+        accel_profile = "adaptive";
+        follow_mouse = 2;
 
         touchpad = {
           natural_scroll = "yes";
@@ -54,7 +54,7 @@ in
           scroll_factor = 0.5;
         };
 
-        sensitivity = 0; # -1.0 to 1.0, 0 means no modification.
+        sensitivity = 0.5; # -1.0 to 1.0, 0 means no modification.
       };
 
       general = {
@@ -78,7 +78,7 @@ in
         rounding = 8;
         
         blur = {
-            enabled = "true";
+            enabled = "false";
             size = 3;
             passes = 1;
         };
@@ -112,12 +112,14 @@ in
       bind = [
 
         ", Print, exec, grim -g \"$(slurp -d)\" - | wl-copy"
+        "$mainMod, V, exec, clipman pick -t wofi"
 
         "$mainMod, Q, exec, $terminal"
         "$mainMod, C, killactive,"
         "$mainMod, M, exit, "
         "$mainMod, E, exec, $fileManager"
-        "$mainMod, V, togglefloating, "
+        "$mainMod, G, togglefloating, "
+        "$mainMod, F, fullscreen, " # toggle fullscreen
         "$mainMod, R, exec, $menu"
         "$mainMod, P, pseudo," # dwindle
         "$mainMod, J, togglesplit," # dwindle
@@ -155,7 +157,14 @@ in
       exec-once = [
         ''${startupScript}/bin/start''
         "${pkgs.hyprpaper}/bin/hyprpaper"
-        ];
+        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        "${pkgs.copyq}/bin/copyq --start-server"
+        "${pkgs.udiskie}/bin/udiskie &"
+      ];
+
+      debug = {
+          overlay = true;
+      };
     };
   };
 

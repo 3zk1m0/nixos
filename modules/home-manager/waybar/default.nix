@@ -21,6 +21,7 @@
 
         modules-right = [
           "privacy"
+          "idle_inhibitor"
           "pulseaudio"
           "group/hardware"
           "clock"
@@ -73,6 +74,7 @@
               critical = 15;
           };
           format = "{capacity}% {icon} ";
+          format-charging = "{capacity}% {icon} ";
           format-icons = ["" "" "" "" ""];
           max-length = 25;
         };
@@ -105,6 +107,14 @@
           format = "  ";
           tooltip = false;
           on-click = "wlogout";
+        };
+
+        idle_inhibitor = {
+          format = "{icon}";
+          format-icons = {
+              activated = " ";
+              deactivated = " ";
+          };
         };
 
       };
