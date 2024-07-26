@@ -29,6 +29,7 @@ in
 
       env = [
         "HYPRCURSOR_SIZE,24"
+        "XCURSOR_SIZE,24"
         # "AQ_DRM_DEVICES,/dev/dri/card1:/dev/dri/card2"
       ];
 

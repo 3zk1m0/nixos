@@ -15,15 +15,17 @@ in {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../../modules/opengl.nix
+      ../../modules/sound.nix
+      ../../modules/bluetooth.nix
+      ../../modules/internationalisation.nix
+      ../../modules/fonts.nix
       # <home-manager/nixos>
       inputs.home-manager.nixosModules.default
     ];
 
   nixpkgs.config = {
     allowUnfree = true;
-    packageOverrides = pkgs: with pkgs; {
-      intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
-    };
   };
 
   # Bootloader  
@@ -51,19 +53,8 @@ in {
   time.timeZone = "Europe/Helsinki";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_GB.UTF-8";
 
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "fi_FI.UTF-8";
-    LC_IDENTIFICATION = "fi_FI.UTF-8";
-    LC_MEASUREMENT = "fi_FI.UTF-8";
-    LC_MONETARY = "fi_FI.UTF-8";
-    LC_NAME = "fi_FI.UTF-8";
-    LC_NUMERIC = "fi_FI.UTF-8";
-    LC_PAPER = "fi_FI.UTF-8";
-    LC_TELEPHONE = "fi_FI.UTF-8";
-    LC_TIME = "fi_FI.UTF-8";
-  };
+
 
   # Enable the X11 windowing system.
   services.xserver = {
@@ -73,10 +64,7 @@ in {
       enable = true;
       wayland = true;
     };
-  };
-
-  # Configure console keymap
-  console.keyMap = "fi";
+  };  
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -84,30 +72,6 @@ in {
     enable = true;
     nssmdns = true;
     openFirewall = true;
-  };
-
-  # Bluetooth
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  services.blueman.enable = true;
-
-
-  # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -150,8 +114,6 @@ in {
         mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
       })
     )
-    pulseaudio
-    pavucontrol
     dunst
     libnotify
     swww
@@ -177,13 +139,6 @@ in {
     xdg-utils
     copyq
     udiskie
-  ];
-
-  fonts.packages = with pkgs; [
-    #font-awesome
-    #cantarell-fonts
-    #noto-fonts
-    nerdfonts
   ];
 
   virtualisation.docker.enable = true;
@@ -224,14 +179,7 @@ in {
 
 
 
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
-      intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      libvdpau-va-gl
-    ];
-  };
+
 
 
   # List services that you want to enable:
