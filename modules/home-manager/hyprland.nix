@@ -4,20 +4,20 @@ let
   startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
     pidof ${pkgs.waybar}/bin/waybar || ${pkgs.waybar}/bin/waybar &
     pidof ${pkgs.hypridle}/bin/hypridle || ${pkgs.hypridle}/bin/hypridle &
-    ${pkgs.swww}/bin/swww init &
-    ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
+    pidof ${pkgs.networkmanagerapplet}/bin/nm-applet || ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
+    pidof ${pkgs.hyprpaper}/bin/hyprpaper || "${pkgs.hyprpaper}/bin/hyprpaper"
+    pidof ${pkgs.copyq}/bin/copyq || "${pkgs.copyq}/bin/copyq --start-server"
+    pidof ${pkgs.udiskie}/bin/udiskie || "${pkgs.udiskie}/bin/udiskie &"
     blueman-applet &
   ''; 
 
-    #sleep 1
-
-    # ${pkgs.swww}/bin/swww img ${./wallpaper.png} &
 in
 {
 
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    systemdIntegration = true;
     systemd.variables = ["--all"];
     settings = {
 
@@ -29,6 +29,7 @@ in
 
       env = [
         "HYPRCURSOR_SIZE,24"
+        # "AQ_DRM_DEVICES,/dev/dri/card1:/dev/dri/card2"
       ];
 
       workspace = [
@@ -43,7 +44,9 @@ in
 
       input = {
         kb_layout = "fi";
-        accel_profile = "adaptive";
+        numlock_by_default = true;
+        # accel_profile = "flat";
+        # sensitivity = 0.5; # -1.0 to 1.0, 0 means no modification.
         follow_mouse = 2;
 
         touchpad = {
@@ -54,7 +57,6 @@ in
           scroll_factor = 0.5;
         };
 
-        sensitivity = 0.5; # -1.0 to 1.0, 0 means no modification.
       };
 
       general = {
@@ -106,6 +108,13 @@ in
         ];
       };
 
+      misc = {
+        force_default_wallpaper = 1;
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+
+      };
+
       windowrulev2 = "suppressevent maximize, class:.*";
 
 
@@ -154,18 +163,28 @@ in
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      exec-once = [
-        ''${startupScript}/bin/start''
-        "${pkgs.hyprpaper}/bin/hyprpaper"
-        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-        "${pkgs.copyq}/bin/copyq --start-server"
-        "${pkgs.udiskie}/bin/udiskie &"
+      windowrule = [
+        "float,(pavucontrol)"
+        "float,(blueman-manager)"
       ];
 
-      debug = {
-          overlay = true;
-      };
+      exec = [
+        "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+      ];
+
+      exec-once = [
+        ''${startupScript}/bin/start''
+      ];
+
     };
+    extraConfig = ''
+      device {
+        name=logitech-mx-vertical-1
+        sensitivity=0.5
+        accel_profile=adaptive
+      }
+    '';
   };
 
 

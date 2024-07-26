@@ -2,9 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgs-unstable, nixpkgs-unstable, inputs, ... }:
-
-{
+{ config, pkgs, pkgs-unstable, nixpkgs-unstable, inputs, ... }: let
+  zed-fhs = pkgs.buildFHSUserEnv {
+    name = "zed";
+    targetPkgs = pkgs-unstablepkgs:
+      with pkgs; [
+        zed-editor
+      ];
+    runScript = "zed";
+  };
+in {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -61,6 +68,7 @@
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
+    videoDrivers = [ "intel" ];
     displayManager.gdm = {
       enable = true;
       wayland = true;
@@ -72,6 +80,11 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns = true;
+    openFirewall = true;
+  };
 
   # Bluetooth
   hardware.bluetooth.enable = true;
@@ -98,7 +111,10 @@
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput = {
+    enable = true;
+    mouse.accelProfile = "flat";
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.sande = {
@@ -112,6 +128,7 @@
       zsh
       ungoogled-chromium
       pkgs-unstable.ideamaker
+      zed-fhs
     #  thunderbird
     ];
   };
@@ -121,7 +138,7 @@
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
 
-
+  programs.nix-ld.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -246,8 +263,15 @@
 
   powerManagement.enable = true;
   services.thermald.enable = true;
-  services.tlp.enable = true;
-
+  services.tlp = {
+    enable = true;
+    settings = {
+      INTEL_GPU_MIN_FREQ_ON_AC = "500";
+      INTEL_GPU_MIN_FREQ_ON_BAT = "500";
+      START_CHARGE_THRESH_BAT0 = 40; # 40 and bellow it starts to charge
+      STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
+    };
+  };
   
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
